@@ -108,9 +108,23 @@ design: {
     backgroundColor: '#ffffff', // Banner background
     textColor: '#1f2937', // Text color
     fontFamily: 'system-ui, sans-serif', // Font stack
-    position: 'bottom' // 'bottom' (banner) or 'center' (modal-like)
+    position: 'bottom', // 'bottom' or 'center' (center adds a backdrop)
+    buttons: [
+        { type: 'accept', label: 'Accept All', variant: 'primary' },
+        { type: 'reject', label: 'Reject All', variant: 'secondary' },
+        { type: 'settings', label: 'Customize', variant: 'text' }
+    ]
 }
 ```
+
+### `design.buttons` (Array)
+Customize the order, text, and style of buttons.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `type` | `string` | Action type: `'accept'`, `'reject'`, or `'settings'`. |
+| `label` | `string` | Text to display on the button. |
+| `variant` | `string` | Style variant: `'primary'`, `'secondary'`, or `'text'`. |
 
 ## 🔒 Script Blocking
 

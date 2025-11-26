@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    // --- Default Configuration ---
+
     const defaultConfig = {
         services: [
             {
@@ -10,7 +10,7 @@
                 description: 'Necessary for the website to function.',
                 required: true,
                 enabled: true,
-                category: ['security_storage'], // Example GCM type, though usually essential doesn't map to GCM consent
+                category: ['security_storage'],
             },
             {
                 id: 'google_analytics',
@@ -52,7 +52,12 @@
             backgroundColor: '#ffffff',
             textColor: '#1f2937',
             fontFamily: 'system-ui, -apple-system, sans-serif',
-            position: 'bottom', // 'bottom' or 'center'
+            position: 'bottom',
+            buttons: [
+                { type: 'accept', label: 'Accept All', variant: 'primary' },
+                { type: 'reject', label: 'Reject All', variant: 'secondary' },
+                { type: 'settings', label: 'Customize', variant: 'secondary' }
+            ]
         },
         gcm: {
             enabled: true,
@@ -62,7 +67,7 @@
     let config = { ...defaultConfig };
     let consentState = {};
 
-    // --- Utilities ---
+
     function deepMerge(target, source) {
         for (const key of Object.keys(source)) {
             if (source[key] instanceof Object && key in target) {
@@ -73,44 +78,12 @@
         return target;
     }
 
-    function setCookie(name, value, days) {
-        let expires = "";
-        if (days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
-    }
 
-    function getCookie(name) {
-        const nameEQ = name + "=";
-        const ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-
-    function eraseCookie(name, domain) {
-        let domainStr = domain ? `; domain=${domain}` : '';
-        document.cookie = name + '=; Max-Age=-99999999;' + domainStr + '; path=/';
-        if (domain) {
-            document.cookie = name + '=; Max-Age=-99999999; domain=.' + domain + '; path=/';
-        }
-    }
-
-    // --- Logic ---
     function init() {
-        // 1. Load Config
-        // Check for global config object
         if (window.KekslyConfig) {
             config = deepMerge(config, window.KekslyConfig);
             run();
         } else {
-            // Check for data-config attribute
             const scriptTag = document.currentScript || document.querySelector('script[src*="keksly.js"]');
             const configUrl = scriptTag ? scriptTag.getAttribute('data-config') : null;
 
@@ -123,10 +96,10 @@
                     })
                     .catch(err => {
                         console.error('Keksly: Failed to load config', err);
-                        run(); // Run with defaults
+                        run();
                     });
             } else {
-                run(); // Run with defaults
+                run();
             }
         }
     }
@@ -135,24 +108,24 @@
         loadConsent();
         injectStyles();
 
-        if (!getCookie('keksly_consent')) {
+        if (!localStorage.getItem('keksly_consent')) {
             showBanner();
         } else {
-            applyConsent(); // Apply existing consent
+            applyConsent();
         }
 
-        // Expose open settings function
+
         window.Keksly = {
             openSettings: showSettingsModal,
             reset: () => {
-                eraseCookie('keksly_consent');
+                localStorage.removeItem('keksly_consent');
                 location.reload();
             }
         };
     }
 
     function loadConsent() {
-        const storedConsent = getCookie('keksly_consent');
+        const storedConsent = localStorage.getItem('keksly_consent');
         if (storedConsent) {
             try {
                 consentState = JSON.parse(storedConsent);
@@ -164,7 +137,6 @@
                 consentState[srv.id] = srv.required;
             });
         }
-        // Ensure required are always true
         config.services.forEach(srv => {
             if (srv.required) consentState[srv.id] = true;
         });
@@ -175,7 +147,7 @@
         config.services.forEach(srv => {
             if (srv.required) consentState[srv.id] = true;
         });
-        setCookie('keksly_consent', JSON.stringify(consentState), 365);
+        localStorage.setItem('keksly_consent', JSON.stringify(consentState));
         applyConsent();
         hideBanner();
         hideSettingsModal();
@@ -185,7 +157,6 @@
         pushDataLayer();
         if (config.gcm.enabled) updateGcm();
         handleScriptBlocking();
-        // cleanupCookies removed as per new requirement
     }
 
     function pushDataLayer() {
@@ -217,8 +188,6 @@
             window.dataLayer.push(arguments);
         }
 
-        // We assume 'default' was called by user or we are late.
-        // We send 'update'
         gtag('consent', 'update', gcmStatus);
     }
 
@@ -244,9 +213,6 @@
         });
     }
 
-    // cleanupCookies function removed
-
-    // --- UI ---
     function injectStyles() {
         if (document.getElementById('keksly-styles')) return;
         const { design } = config;
@@ -298,7 +264,6 @@
             .keksly-btn-secondary { background-color: transparent; border: 1px solid ${design.textColor}; color: ${design.textColor}; }
             .keksly-btn-text { background: none; color: ${design.textColor}; text-decoration: underline; font-size: 12px; padding: 0; margin-top: 10px; width: 100%; text-align: center; cursor: pointer; border: none;}
 
-            /* Modal */
             #keksly-modal {
                 position: fixed; top: 0; left: 0; right: 0; bottom: 0;
                 background: rgba(0,0,0,0.6);
@@ -331,7 +296,6 @@
             .keksly-cat-title { font-weight: 600; font-size: 16px; }
             .keksly-cat-desc { font-size: 14px; opacity: 0.8; }
             
-            /* Switch */
             .keksly-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
             .keksly-switch input { opacity: 0; width: 0; height: 0; }
             .keksly-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
@@ -345,6 +309,17 @@
             .keksly-footer-links { display: flex; justify-content: center; gap: 15px; margin-top: 5px; }
             .keksly-footer-links a { color: ${design.textColor}; font-size: 12px; text-decoration: none; opacity: 0.7; }
             .keksly-footer-links a:hover { opacity: 1; text-decoration: underline; }
+
+            #keksly-backdrop {
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(2px);
+                z-index: 2147483646;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+            #keksly-backdrop.visible { opacity: 1; }
         `;
         const style = document.createElement('style');
         style.id = 'keksly-styles';
@@ -357,43 +332,71 @@
 
         const banner = document.createElement('div');
         banner.id = 'keksly-banner';
+        const buttonsHtml = config.design.buttons.map(btn => {
+            let className = 'keksly-btn';
+            if (btn.variant === 'primary') className += ' keksly-btn-primary';
+            else if (btn.variant === 'secondary') className += ' keksly-btn-secondary';
+            else if (btn.variant === 'text') className += ' keksly-btn-text';
+
+            return `<button data-action="${btn.type}" class="${className}">${btn.label}</button>`;
+        }).join('');
+
         banner.innerHTML = `
             <h2 class="keksly-title">${config.texts.banner.title}</h2>
             <p class="keksly-desc">${config.texts.banner.description}</p>
             <div class="keksly-actions">
-                <button id="keksly-accept-all" class="keksly-btn keksly-btn-primary">${config.texts.banner.acceptAll}</button>
-                <button id="keksly-reject-all" class="keksly-btn keksly-btn-secondary">${config.texts.banner.rejectAll}</button>
-                <button id="keksly-settings-btn" class="keksly-btn keksly-btn-secondary" style="flex: 0 0 auto;">${config.texts.banner.settings}</button>
+                ${buttonsHtml}
             </div>
             <div class="keksly-footer-links">
                 <a href="${config.texts.links.privacyPolicy.url}" target="_blank">${config.texts.links.privacyPolicy.text}</a>
                 <a href="${config.texts.links.imprint.url}" target="_blank">${config.texts.links.imprint.text}</a>
             </div>
         `;
+
+        if (config.design.position === 'center') {
+            const backdrop = document.createElement('div');
+            backdrop.id = 'keksly-backdrop';
+            document.body.appendChild(backdrop);
+            backdrop.offsetHeight;
+            backdrop.classList.add('visible');
+        }
+
         document.body.appendChild(banner);
 
-        // Force reflow
         banner.offsetHeight;
         banner.classList.add('visible');
 
-        document.getElementById('keksly-accept-all').addEventListener('click', () => {
-            const all = {};
-            config.services.forEach(s => all[s.id] = true);
-            saveConsent(all);
-        });
 
-        document.getElementById('keksly-reject-all').addEventListener('click', () => {
-            const req = {};
-            config.services.forEach(s => req[s.id] = s.required);
-            saveConsent(req);
-        });
+        const acceptBtn = banner.querySelector('[data-action="accept"]');
+        if (acceptBtn) {
+            acceptBtn.addEventListener('click', () => {
+                const all = {};
+                config.services.forEach(s => all[s.id] = true);
+                saveConsent(all);
+            });
+        }
 
-        document.getElementById('keksly-settings-btn').addEventListener('click', showSettingsModal);
+        const rejectBtn = banner.querySelector('[data-action="reject"]');
+        if (rejectBtn) {
+            rejectBtn.addEventListener('click', () => {
+                const req = {};
+                config.services.forEach(s => req[s.id] = s.required);
+                saveConsent(req);
+            });
+        }
+
+        const settingsBtn = banner.querySelector('[data-action="settings"]');
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', showSettingsModal);
+        }
     }
 
     function hideBanner() {
         const banner = document.getElementById('keksly-banner');
         if (banner) banner.remove();
+
+        const backdrop = document.getElementById('keksly-backdrop');
+        if (backdrop) backdrop.remove();
     }
 
     function showSettingsModal() {
@@ -453,7 +456,7 @@
         if (modal) modal.classList.remove('open');
     }
 
-    // Start
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
@@ -461,3 +464,5 @@
     }
 
 })();
+
+// For Madita <3
