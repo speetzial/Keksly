@@ -1,6 +1,6 @@
 # 🍪 Keksly
 
-**The lightweight, developer-friendly Cookie Consent Banner for the modern web.**
+**The lightweight, easy-to-use Cookie Consent Banner for the modern web.**
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Size](https://img.shields.io/badge/size-<20kb-green.svg)
