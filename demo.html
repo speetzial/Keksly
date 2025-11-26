@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keksly Demo</title>
+
+    <!-- Google Consent Mode Default (Should be before Keksly) -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('consent', 'default', {
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'analytics_storage': 'denied'
+        });
+    </script>
+
+    <!-- Keksly Configuration (Optional, overrides defaults) -->
+    <script>
+        window.KekslyConfig = {
+            design: {
+                primaryColor: '#10b981', // Green
+                position: 'bottom'
+            },
+            texts: {
+                banner: {
+                    title: 'Cookie Consent Demo',
+                    description: 'This is a demo of the Keksly cookie banner. Try accepting/rejecting cookies and watch the console/DataLayer.'
+                }
+            },
+            services: [
+                {
+                    id: 'essential',
+                    name: 'Essential',
+                    description: 'Necessary for the website to function.',
+                    required: true,
+                    enabled: true,
+                    category: ['security_storage']
+                },
+                {
+                    id: 'analytics_service',
+                    name: 'Google Analytics',
+                    description: 'Tracks website usage.',
+                    required: false,
+                    enabled: false,
+                    category: ['analytics_storage']
+                },
+                {
+                    id: 'marketing_service',
+                    name: 'Facebook Pixel',
+                    description: 'Tracks conversions.',
+                    required: false,
+                    enabled: false,
+                    category: ['ad_storage', 'ad_user_data', 'ad_personalization']
+                }
+            ]
+        };
+    </script>
+
+    <!-- Load Keksly -->
+    <script src="keksly.js"></script>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        .status {
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        code {
+            background: #e5e7eb;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Keksly Demo</h1>
+    <p>This page demonstrates the Keksly Cookie Consent Banner.</p>
+
+    <div class="status">
+        <h3>Current Status</h3>
+        <p>Check the console for DataLayer events.</p>
+        <button onclick="window.Keksly.openSettings()">Open Settings</button>
+        <button onclick="window.Keksly.reset()">Reset Consent</button>
+    </div>
+
+    <h3>Script Blocking Test</h3>
+    <p>The following script is blocked until 'Analytics' is accepted:</p>
+
+    <!-- Blocked Script -->
+    <script type="text/plain" data-service="analytics_service">
+        console.log('ANALYTICS SCRIPT EXECUTED! (Consent Granted)');
+        alert('Analytics Script Executed!');
+    </script>
+
+    <script>
+        // Monitor DataLayer
+        const originalPush = window.dataLayer.push;
+        window.dataLayer.push = function () {
+            console.log('DataLayer Push:', arguments[0]);
+            originalPush.apply(this, arguments);
+        };
+    </script>
+</body>
+
+</html>
