@@ -11,23 +11,7 @@
                 required: true,
                 enabled: true,
                 category: ['security_storage'],
-            },
-            {
-                id: 'google_analytics',
-                name: 'Google Analytics',
-                description: 'Google Analytics helps us understand how you use our website.',
-                required: false,
-                enabled: false,
-                category: ['analytics_storage'],
-            },
-            {
-                id: 'google_ads',
-                name: 'Google Ads',
-                description: 'Used to show you relevant ads.',
-                required: false,
-                enabled: false,
-                category: ['ad_storage', 'ad_user_data', 'ad_personalization'],
-            },
+            }
         ],
         texts: {
             banner: {
