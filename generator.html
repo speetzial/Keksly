@@ -12,6 +12,77 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+
+    <!-- Keksly Setup (Live Demo) -->
+    <script>
+        window.KekslyConfig = {
+        "services": [
+            {
+            "id": "essential",
+            "name": "Essential",
+            "description": "Required for core website functionality.",
+            "required": true,
+            "enabled": true,
+            "category": [
+                "security_storage"
+            ]
+            }
+        ],
+        "texts": {
+            "banner": {
+            "title": "🍪 We respect your privacy",
+            "description": "We use cookies to improve our site and show relevant content. You decide what runs."
+            },
+            "settings": {
+            "title": "Cookie settings",
+            "save": "Save",
+            "back": "Back"
+            },
+            "links": {
+            "privacyPolicy": {
+                "text": "Privacy Policy",
+                "url": "#privacy"
+            },
+            "imprint": {
+                "text": "Imprint",
+                "url": "https://mein.online-impressum.de/speetzen/"
+            }
+            }
+        },
+        "design": {
+            "primaryColor": "#2563eb",
+            "backgroundColor": "#ffffff",
+            "textColor": "#1f2937",
+            "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+            "position": "center",
+            "buttons": [
+            {
+                "type": "accept",
+                "label": "Accept all",
+                "variant": "secondary"
+            },
+            {
+                "type": "reject",
+                "label": "Reject all",
+                "variant": "secondary"
+            },
+            {
+                "type": "settings",
+                "label": "Customize",
+                "variant": "secondary"
+            }
+            ]
+        },
+        "gcm": {
+            "enabled": true
+        }
+        };
+    </script>
+    <script src="keksly.js"></script>
+
+
+
+
     <style>
         :root {
             --primary: #2563eb;
