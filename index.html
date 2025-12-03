@@ -15,68 +15,78 @@
 
     <!-- Keksly Setup (Live Demo) -->
     <script>
-        window.KekslyConfig = {
-        "services": [
-            {
-            "id": "essential",
-            "name": "Essential",
-            "description": "Required for core website functionality.",
-            "required": true,
-            "enabled": true,
-            "category": [
-                "security_storage"
-            ]
-            }
-        ],
-        "texts": {
-            "banner": {
-            "title": "🍪 We respect your privacy",
-            "description": "We use cookies to improve our site and show relevant content. You decide what runs."
-            },
-            "settings": {
-            "title": "Cookie settings",
-            "save": "Save",
-            "back": "Back"
-            },
-            "links": {
-            "privacyPolicy": {
-                "text": "Privacy Policy",
-                "url": "#privacy"
-            },
-            "imprint": {
-                "text": "Imprint",
-                "url": "https://mein.online-impressum.de/speetzen/"
-            }
-            }
+    window.KekslyConfig = {
+    "services": [
+        {
+        "id": "essential",
+        "name": "Essential",
+        "description": "Required for core website functionality.",
+        "required": true,
+        "enabled": true,
+        "category": [
+            "security_storage"
+        ]
         },
-        "design": {
-            "primaryColor": "#2563eb",
-            "backgroundColor": "#ffffff",
-            "textColor": "#1f2937",
-            "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
-            "position": "center",
-            "buttons": [
-            {
-                "type": "accept",
-                "label": "Accept all",
-                "variant": "secondary"
-            },
-            {
-                "type": "reject",
-                "label": "Reject all",
-                "variant": "secondary"
-            },
-            {
-                "type": "settings",
-                "label": "Customize",
-                "variant": "secondary"
-            }
-            ]
-        },
-        "gcm": {
-            "enabled": true
+        {
+        "id": "umami",
+        "name": "Umami",
+        "description": "We use the privacy-friendly analytics tool Umami to analyze how our website is used without cookies and to improve our services.",
+        "required": false,
+        "enabled": false,
+        "category": [
+            "analytics_storage"
+        ]
         }
-        };
+    ],
+    "texts": {
+        "banner": {
+        "title": "🍪 We respect your privacy",
+        "description": "We use cookies to improve our site and show relevant content. You decide what runs."
+        },
+        "settings": {
+        "title": "Cookie settings",
+        "save": "Save",
+        "back": "Back"
+        },
+        "links": {
+        "privacyPolicy": {
+            "text": "Privacy Policy",
+            "url": "#"
+        },
+        "imprint": {
+            "text": "Imprint",
+            "url": "https://mein.online-impressum.de/speetzen/"
+        }
+        }
+    },
+    "design": {
+        "primaryColor": "#2563eb",
+        "backgroundColor": "#ffffff",
+        "textColor": "#1f2937",
+        "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+        "position": "center",
+        "buttons": [
+        {
+            "type": "accept",
+            "label": "Accept all",
+            "variant": "secondary"
+        },
+        {
+            "type": "reject",
+            "label": "Reject all",
+            "variant": "secondary"
+        },
+        {
+            "type": "settings",
+            "label": "Customize",
+            "variant": "secondary"
+        }
+        ]
+    },
+    "gcm": {
+        "enabled": true
+    }
+    };
     </script>
     <script src="keksly.js"></script>
 
@@ -641,6 +651,13 @@
             </div>
         </div>
     </footer>
+
+    <script data-service="umami">
+        var img = document.createElement('img');
+        img.src = 'https://analytics.speetzen.eu/p/BXyizTbz0';
+        img.style.display = 'none';
+        document.body.appendChild(img);
+    </script>
 
 </body>
 

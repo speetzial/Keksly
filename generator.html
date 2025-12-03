@@ -26,6 +26,16 @@
             "category": [
                 "security_storage"
             ]
+            },
+            {
+            "id": "umami",
+            "name": "Umami",
+            "description": "We use the privacy-friendly analytics tool Umami to analyze how our website is used without cookies and to improve our services.",
+            "required": false,
+            "enabled": false,
+            "category": [
+                "analytics_storage"
+            ]
             }
         ],
         "texts": {
@@ -41,7 +51,7 @@
             "links": {
             "privacyPolicy": {
                 "text": "Privacy Policy",
-                "url": "#privacy"
+                "url": "#"
             },
             "imprint": {
                 "text": "Imprint",
@@ -1241,6 +1251,13 @@ ${scriptClose}`;
             bindAddService();
             bindScrollLink();
         })();
+    </script>
+
+    <script data-service="umami">
+        var img = document.createElement('img');
+        img.src = 'https://analytics.speetzen.eu/p/BXyizTbz0';
+        img.style.display = 'none';
+        document.body.appendChild(img);
     </script>
 </body>
 
