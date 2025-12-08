@@ -37,11 +37,7 @@
             textColor: '#1f2937',
             fontFamily: 'system-ui, -apple-system, sans-serif',
             position: 'bottom',
-            buttons: [
-                { type: 'accept', label: 'Accept All', variant: 'primary' },
-                { type: 'reject', label: 'Reject All', variant: 'secondary' },
-                { type: 'settings', label: 'Customize', variant: 'secondary' }
-            ]
+            buttons: []
         },
         gcm: {
             enabled: true,
