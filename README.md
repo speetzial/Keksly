@@ -5,6 +5,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Size](https://img.shields.io/badge/size-<20kb-green.svg)
 ![Dependencies](https://img.shields.io/badge/dependencies-none-success.svg)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A41QCJHP)
 
 Keksly is a zero-dependency, fully customizable cookie consent solution designed for GDPR compliance and Google Consent Mode v2 support. It replaces complex category-based systems with a transparent **Service-based** model, giving your users clear control over what they consent to.
 
