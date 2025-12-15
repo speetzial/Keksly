@@ -22,7 +22,7 @@ Keksly is a zero-dependency, fully customizable cookie consent solution designed
 Simply add the script to your `<head>` tag.
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/speetzial/Keksly@1.0.0/keksly.js"></script>
+<script src="https://cdn.keksly.eu/1.0.0/keksly.js"></script>
 ```
 
 ### Option 2: Self-Hosted
