@@ -3,7 +3,7 @@
 **The lightweight, easy-to-use Cookie Consent Banner for the modern web.**
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Size](https://img.shields.io/badge/size-<20kb-green.svg)
+![Size](https://img.shields.io/badge/size-<30kb-green.svg)
 ![Dependencies](https://img.shields.io/badge/dependencies-none-success.svg)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A41QCJHP)
 
@@ -23,7 +23,7 @@ Keksly is a zero-dependency, fully customizable cookie consent solution designed
 Simply add the script to your `<head>` tag.
 
 ```html
-<script src="https://cdn.keksly.eu/1.0.0/keksly.js"></script>
+<script src="https://cdn.keksly.eu/1.1.0/keksly.min.js"></script>
 ```
 
 ### Option 2: Self-Hosted
@@ -127,6 +127,22 @@ Customize the order, text, and style of buttons.
 | `label` | `string` | Text to display on the button. |
 | `variant` | `string` | Style variant: `'primary'`, `'secondary'`, or `'text'`. |
 
+### Versioning (`version`)
+- Optional field `version` (Number), default `1`.
+- Stored in Local Storage under `keksly_version`.
+- Increasing `version` clears the existing consent selection and forces the banner to reappear for all users. The consent history (`keksly_consent_history`) remains intact.
+- If `version` is omitted, Keksly falls back to `1` automatically.
+
+### Customize texts (`texts` & button labels)
+All visible copy can be overridden through configuration—no extra code needed:
+
+- Banner (`texts.banner`): `title`, `description`, `acceptAll`, `rejectAll`, `settings`
+- Settings modal (`texts.settings`): `title`, `save`, `back`, `historyLink`, `historyTitle`, `historyEmpty`
+- Footer links (`texts.links`): `privacyPolicy.text`/`privacyPolicy.url`, `imprint.text`/`imprint.url`
+- Buttons (`design.buttons[*].label`): order and labels of the banner buttons
+
+Any field omitted in `window.KekslyConfig` (or a JSON loaded via `data-config`) automatically falls back to the defaults defined in `keksly.js`.
+
 ## 🔒 Script Blocking
 
 To block a script until a specific service is consented, change `type="text/javascript"` to `type="text/plain"` and add the `data-service` attribute.
@@ -142,6 +158,32 @@ To block a script until a specific service is consented, change `type="text/java
   gtag('config', 'GA_MEASUREMENT_ID');
 </script>
 ```
+
+## 📊 DataLayer & GTM Trigger
+
+Keksly pushes a DataLayer event on every consent apply (first save and, if consent exists, right after page load).
+
+**Event name:** `keksly_consent_update`
+
+**Payload example:**
+
+```javascript
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({
+    event: 'keksly_consent_update',
+    consent: {
+        essential: true,
+        google_analytics: false,
+        google_ads: true
+    }
+});
+```
+
+**How to use in GTM:**
+- Create a “Custom Event” trigger with event name `keksly_consent_update`.
+- Read individual consents via DataLayer variable `consent.google_analytics` etc. (boolean).
+
+**Google Consent Mode:** When `gcm.enabled` is `true` (default), Keksly also calls `gtag('consent', 'update', gcmStatus)` and builds `gcmStatus` from the service categories (`ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`).
 
 ## 📡 API
 

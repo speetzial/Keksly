@@ -16,6 +16,7 @@
     <!-- Keksly Setup (Live Demo) -->
     <script>
     window.KekslyConfig = {
+    "version": 1,
     "services": [
         {
         "id": "essential",
@@ -85,10 +86,14 @@
     },
     "gcm": {
         "enabled": true
+    },
+    "uid": {
+        "version": 1,
+        "respectDnt": true
     }
     };
     </script>
-    <script src="keksly.js"></script>
+    <script src="keksly.min.js"></script>
 
     <style>
         :root {
@@ -437,7 +442,7 @@
                 <a href="#installation">Installation</a>
                 <a href="#configuration">Docs</a>
                 <a href="generator.html">Generator</a>
-                <a href="https://github.com/speetzial/Keksly" target="_blank">GitHub</a>
+                <a href="https://codeberg.org/speetzial/Keksly" target="_blank">Codeberg</a>
             </div>
         </div>
     </header>
@@ -452,13 +457,13 @@
 
                 <div class="hero-btns">
                     <a href="#installation" class="btn btn-primary">Get Started</a>
-                    <a href="https://github.com/speetzial/Keksly" target="_blank" class="btn btn-secondary">View on
-                        GitHub</a>
+                    <a href="https://codeberg.org/speetzial/Keksly" target="_blank" class="btn btn-secondary">View on
+                        Codeberg</a>
                 </div>
 
                 <div class="badges">
                     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
-                    <img src="https://img.shields.io/badge/size-<20kb-green.svg" alt="Size">
+                    <img src="https://img.shields.io/badge/size-<25kb-green.svg" alt="Size">
                 </div>
 
                 <div class="demo-controls">
@@ -527,7 +532,7 @@
                         <p style="margin-bottom: 10px; color: var(--text-light);">Add this to your
                             <code>&lt;head&gt;</code> tag:
                         </p>
-                        <pre>&lt;script src="https://cdn.keksly.eu/1.0.0/keksly.js"&gt;&lt;/script&gt;</pre>
+                        <pre>&lt;script src="https://cdn.keksly.eu/1.1.0/keksly.min.js"&gt;&lt;/script&gt;</pre>
                     </div>
                     <div>
                         <h3>Option 2: Self-Hosted</h3>
@@ -542,32 +547,54 @@
         <section id="configuration" class="features">
             <div class="container">
                 <h2 class="section-title">Configuration</h2>
-                <p class="section-desc">Define your services and customize the design.</p>
+                <p class="section-desc">Set up <code>window.KekslyConfig</code> before loading the script. Define your services, design, and Google Consent Mode (GCM) mapping in one place.</p>
 
+                <h3 style="margin-top: 20px; margin-bottom: 14px;">Full example</h3>
                 <pre>
 &lt;script&gt;
+  // 1) Define config before keksly.js
   window.KekslyConfig = {
-      services: [
-          {
-              id: 'google_analytics',
-              name: 'Google Analytics',
-              description: 'Tracks website usage.',
-              category: ['analytics_storage'] // Maps to GCM
-          }
-      ],
-      design: {
-          primaryColor: '#3b82f6',
-          position: 'bottom',
-          buttons: [
-              { type: 'accept', label: 'Accept All', variant: 'primary' },
-              { type: 'reject', label: 'Reject All', variant: 'secondary' },
-              { type: 'settings', label: 'Customize', variant: 'text' }
-          ]
+    services: [
+      {
+        id: 'google_analytics',
+        name: 'Google Analytics',
+        description: 'Tracks website usage and performance.',
+        required: false,
+        enabled: false,
+        category: ['analytics_storage']
+      },
+      {
+        id: 'google_ads',
+        name: 'Google Ads',
+        description: 'Personalized advertising.',
+        required: false,
+        enabled: false,
+        category: ['ad_storage', 'ad_user_data', 'ad_personalization']
       }
+    ],
+    design: {
+      primaryColor: '#3b82f6',
+      backgroundColor: '#ffffff',
+      textColor: '#1f2937',
+      fontFamily: 'system-ui, sans-serif',
+      position: 'bottom', // 'bottom' or 'center'
+      buttons: [
+        { type: 'accept', label: 'Accept All', variant: 'primary' },
+        { type: 'reject', label: 'Reject All', variant: 'secondary' },
+        { type: 'settings', label: 'Customize', variant: 'text' }
+      ]
+    },
+    gcm: {
+      enabled: true
+    }
   };
-&lt;/script&gt;</pre>
 
-                <h3 style="margin-top: 40px; margin-bottom: 20px;">Service Options</h3>
+  // 2) Load Keksly afterwards
+&lt;/script&gt;
+&lt;script src="keksly.js"&gt;&lt;/script&gt;</pre>
+
+                <h3 style="margin-top: 40px; margin-bottom: 16px;">Services</h3>
+                <p style="margin-bottom: 16px; color: var(--text-light);">Each service represents a vendor/technology a user can allow. Required services are always stored as <code>true</code> and cannot be toggled off.</p>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -581,7 +608,7 @@
                             <tr>
                                 <td><code>id</code></td>
                                 <td>string</td>
-                                <td>Unique identifier (e.g., 'google_analytics')</td>
+                                <td>Unique identifier (e.g., <code>google_analytics</code>)</td>
                             </tr>
                             <tr>
                                 <td><code>name</code></td>
@@ -589,23 +616,69 @@
                                 <td>Display name shown to the user</td>
                             </tr>
                             <tr>
-                                <td><code>category</code></td>
-                                <td>string[]</td>
-                                <td>Array of GCM types (e.g., <code>['ad_storage']</code>)</td>
+                                <td><code>description</code></td>
+                                <td>string</td>
+                                <td>Short explanation of what the service does</td>
                             </tr>
                             <tr>
                                 <td><code>required</code></td>
                                 <td>boolean</td>
-                                <td>If true, user cannot disable this service</td>
+                                <td>If <code>true</code>, user cannot disable this service</td>
+                            </tr>
+                            <tr>
+                                <td><code>enabled</code></td>
+                                <td>boolean</td>
+                                <td>Default state (use <code>false</code> for GDPR compliance)</td>
+                            </tr>
+                            <tr>
+                                <td><code>category</code></td>
+                                <td>string[]</td>
+                                <td>Google Consent Mode mapping (see supported categories below)</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3 style="margin-top: 40px; margin-bottom: 20px;">Button Customization</h3>
-                <p style="margin-bottom: 20px; color: var(--text-light);">Define the order and style of buttons via
-                    <code>design.buttons</code>.
-                </p>
+                <p style="margin: 14px 0 10px; font-weight: 600;">Supported GCM categories</p>
+                <ul style="margin-left: 20px; color: var(--text-light);">
+                    <li><code>ad_storage</code></li>
+                    <li><code>ad_user_data</code></li>
+                    <li><code>ad_personalization</code></li>
+                    <li><code>analytics_storage</code></li>
+                    <li><code>functionality_storage</code></li>
+                    <li><code>personalization_storage</code></li>
+                    <li><code>security_storage</code></li>
+                </ul>
+
+                <h3 style="margin-top: 32px; margin-bottom: 16px;">Design</h3>
+                <p style="margin-bottom: 14px; color: var(--text-light);">Control the look & feel. <code>position: 'center'</code> adds a backdrop; <code>'bottom'</code> is a slim bar. The <code>buttons</code> array controls order and variants.</p>
+                <pre>
+design: {
+  primaryColor: '#3b82f6',      // Button & toggle color
+  backgroundColor: '#ffffff',   // Banner background
+  textColor: '#1f2937',         // Text color
+  fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+  position: 'center',           // 'bottom' | 'center'
+  buttons: [
+    { type: 'accept', label: 'Accept all', variant: 'primary' },
+    { type: 'reject', label: 'Reject all', variant: 'secondary' },
+    { type: 'settings', label: 'Customize', variant: 'text' }
+  ]
+}</pre>
+
+                <h3 style="margin-top: 32px; margin-bottom: 16px;">Script blocking</h3>
+                <p style="margin-bottom: 14px; color: var(--text-light);">To delay a script until its service is consented, change the type and add <code>data-service</code>. Keksly will swap it back to a normal script when allowed.</p>
+                <pre>
+&lt;script type="text/plain" data-service="google_analytics" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"&gt;&lt;/script&gt;
+&lt;script type="text/plain" data-service="google_analytics"&gt;
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'GA_MEASUREMENT_ID');
+&lt;/script&gt;</pre>
+
+                <h3 style="margin-top: 32px; margin-bottom: 16px;">Buttons reference</h3>
+                <p style="margin-bottom: 20px; color: var(--text-light);">Define the order and style of buttons via <code>design.buttons</code>. Variants: <code>primary</code>, <code>secondary</code>, <code>text</code>.</p>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -619,8 +692,7 @@
                             <tr>
                                 <td><code>type</code></td>
                                 <td>string</td>
-                                <td>Action: <code>'accept'</code>, <code>'reject'</code>, or <code>'settings'</code>
-                                </td>
+                                <td>Action: <code>accept</code>, <code>reject</code>, or <code>settings</code></td>
                             </tr>
                             <tr>
                                 <td><code>label</code></td>
@@ -630,7 +702,7 @@
                             <tr>
                                 <td><code>variant</code></td>
                                 <td>string</td>
-                                <td>Style: <code>'primary'</code>, <code>'secondary'</code>, or <code>'text'</code></td>
+                                <td>Style: <code>primary</code>, <code>secondary</code>, or <code>text</code></td>
                             </tr>
                         </tbody>
                     </table>
@@ -646,9 +718,9 @@
             <p>Made in EU 🇪🇺</p>
             <p style="max-width: 780px; margin: 0 auto 12px; color: #d1d5db;">Keksly and the provided example texts/snippets are offered “as is” without warranty. They do not constitute legal advice. You are solely responsible for your implementation, wording, and compliance; the author assumes no liability.</p>
             <div class="footer-links">
-                <a href="https://github.com/speetzial/Keksly">GitHub</a>
-                <a href="https://github.com/speetzial/Keksly/issues">Issues</a>
-                <a href="https://mein.online-impressum.de/speetzen/">Impressum</a>
+                <a href="https://codeberg.org/speetzial/Keksly">Codeberg</a>
+                <a href="https://codeberg.org/speetzial/Keksly/issues">Issues</a>
+                <a href="https://mein.online-impressum.de/speetzen/">Imprint</a>
             </div>
         </div>
     </footer>

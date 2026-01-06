@@ -366,6 +366,7 @@
 
         input[type="text"],
         input[type="url"],
+        input[type="number"],
         select,
         textarea,
         input[type="color"] {
@@ -651,7 +652,7 @@
                 <a href="index.html">Home</a>
                 <a href="#config">Configurator</a>
                 <a href="#output">Script</a>
-                <a href="https://github.com/speetzial/Keksly" target="_blank">GitHub</a>
+                <a href="https://codeberg.org/speetzial/Keksly" target="_blank">Codeberg</a>
             </div>
         </div>
     </header>
@@ -714,6 +715,18 @@
                                 <input id="settings-back" type="text" data-field="texts.settingsBack" placeholder="Back">
                             </div>
                             <div class="form-group">
+                                <label for="history-link">History link label</label>
+                                <input id="history-link" type="text" data-field="texts.historyLink" placeholder="View your consent history">
+                            </div>
+                            <div class="form-group">
+                                <label for="history-title">History panel title</label>
+                                <input id="history-title" type="text" data-field="texts.historyTitle" placeholder="Consent History">
+                            </div>
+                            <div class="form-group">
+                                <label for="history-empty">History empty state</label>
+                                <input id="history-empty" type="text" data-field="texts.historyEmpty" placeholder="No history entries yet.">
+                            </div>
+                            <div class="form-group">
                                 <label for="privacy-text">Link: Privacy Policy</label>
                                 <input id="privacy-text" type="text" data-field="texts.privacyText" placeholder="Privacy Policy">
                                 <input type="url" data-field="texts.privacyUrl" placeholder="https://example.com/privacy">
@@ -722,6 +735,11 @@
                                 <label for="imprint-text">Link: Imprint / Legal</label>
                                 <input id="imprint-text" type="text" data-field="texts.imprintText" placeholder="Imprint">
                                 <input type="url" data-field="texts.imprintUrl" placeholder="https://example.com/imprint">
+                            </div>
+                            <div class="form-group">
+                                <label for="banner-version">Banner version</label>
+                                <input id="banner-version" type="number" min="1" step="1" data-field="version" placeholder="1">
+                                <small>Increase this number to force the banner to reappear for all users.</small>
                             </div>
                         </div>
                     </div>
@@ -832,9 +850,9 @@
             <p>Made in EU 🇪🇺</p>
             <p style="max-width: 780px; margin: 0 auto 12px; color: #d1d5db;">Keksly and the provided example texts/snippets are offered “as is” without warranty. They do not constitute legal advice. You are solely responsible for your implementation, wording, and compliance; the author assumes no liability.</p>
             <div class="footer-links">
-                <a href="https://github.com/speetzial/Keksly">GitHub</a>
-                <a href="https://github.com/speetzial/Keksly/issues">Issues</a>
-                <a href="https://mein.online-impressum.de/speetzen/">Impressum</a>
+                <a href="https://codeberg.org/speetzial/Keksly">Codeberg</a>
+                <a href="https://codeberg.org/speetzial/Keksly/issues">Issues</a>
+                <a href="https://mein.online-impressum.de/speetzen/">Imprint</a>
             </div>
         </div>
     </footer>
@@ -842,12 +860,16 @@
     <script>
         (() => {
             const state = {
+                version: 1,
                 texts: {
                     bannerTitle: '🍪 We respect your privacy',
                     bannerDescription: 'We use cookies to improve our site and show relevant content. You decide what runs.',
                     settingsTitle: 'Cookie settings',
                     settingsSave: 'Save',
                     settingsBack: 'Back',
+                    historyLink: 'View your consent history',
+                    historyTitle: 'Consent History',
+                    historyEmpty: 'No history entries yet.',
                     privacyText: 'Privacy Policy',
                     privacyUrl: 'https://example.com/privacy',
                     imprintText: 'Imprint',
@@ -890,7 +912,7 @@
                 analytics: {
                     id: 'google_analytics',
                     name: 'Google Analytics',
-                    description: 'Anonymisierte Nutzungsstatistiken.',
+                    description: 'Anonymized usage statistics.',
                     required: false,
                     enabled: false,
                     category: ['analytics_storage']
@@ -898,7 +920,7 @@
                 ads: {
                     id: 'google_ads',
                     name: 'Google Ads',
-                    description: 'Personalisierte Werbung.',
+                    description: 'Personalized advertising.',
                     required: false,
                     enabled: false,
                     category: ['ad_storage', 'ad_user_data', 'ad_personalization']
@@ -936,8 +958,8 @@
                 const count = state.services.length + 1;
                 return {
                     id: `service_${count}`,
-                    name: 'Neuer Service',
-                    description: 'Beschreibe, was der Service tut.',
+                    name: 'New Service',
+                    description: 'Describe what the service does.',
                     required: false,
                     enabled: false,
                     category: []
@@ -957,7 +979,7 @@
                 row.className = 'button-row';
                 row.innerHTML = `
                     <div class="form-group">
-                        <label>Aktion</label>
+                        <label>Action</label>
                         <div class="inline-code">${btn.type}</div>
                     </div>
                     <div class="form-group">
@@ -1123,6 +1145,7 @@
 
             function buildConfig() {
                 return {
+                    version: Number(state.version) || 1,
                     services: state.services.map(service => ({
                         id: service.id || 'service_id',
                         name: service.name || 'Service',
@@ -1139,7 +1162,10 @@
                         settings: {
                             title: state.texts.settingsTitle,
                             save: state.texts.settingsSave,
-                            back: state.texts.settingsBack
+                            back: state.texts.settingsBack,
+                            historyLink: state.texts.historyLink,
+                            historyTitle: state.texts.historyTitle,
+                            historyEmpty: state.texts.historyEmpty
                         },
                         links: {
                             privacyPolicy: { text: state.texts.privacyText, url: state.texts.privacyUrl },
@@ -1168,7 +1194,7 @@
                 const code = `<script>
 window.KekslyConfig = ${JSON.stringify(config, null, 2)};
 ${scriptClose}
-<script src="https://cdn.jsdelivr.net/gh/speetzial/Keksly@main/keksly.js">${scriptClose}`;
+<script src="https://cdn.keksly.eu/1.1.0/keksly.min.js">${scriptClose}`;
                 outputEl.value = code;
                 if (statusEl) statusEl.textContent = 'Live updates as you edit.';
 
